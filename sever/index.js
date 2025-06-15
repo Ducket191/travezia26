@@ -54,32 +54,28 @@ Glee Ams,`
 
 // Create payment link and save order info
 app.post('/create-payment-link', async (req, res) => {
-  try {
-    const { amount, orderCode, name, phonenumber, email, ticketCount } = req.body;
+    try {
+        const { amount, orderCode } = req.body;
 
-    if (!amount || !orderCode || !name || !email || !ticketCount) {
-      return res.status(400).json({ error: 'Missing required fields' });
+        if (!amount || !orderCode) {
+            return res.status(400).json({ error: 'Amount and orderCode are required' });
+        }
+
+        const order = {
+            amount,
+            description: 'Thanh toán vé',
+            orderCode,
+            returnUrl: `${YOUR_DOMAIN}/success.html`,
+            cancelUrl: `${YOUR_DOMAIN}/cancel.html`
+        };
+        const paymentLink = await payos.createPaymentLink(order);
+        res.json({ url: paymentLink.checkoutUrl });
+    } catch (error) {
+        console.error('❌ Payment link error:', error);
+        res.status(500).json({ error: 'Failed to create payment link' });
     }
-
-    // Save order info to pendingOrders
-    pendingOrders.set(orderCode, { name, phonenumber, email, ticketCount });
-
-    const order = {
-      amount,
-      description: 'Thanh toán vé',
-      orderCode,
-      returnUrl: `${YOUR_DOMAIN}/success.html`,
-      cancelUrl: `${YOUR_DOMAIN}/cancel.html`
-    };
-
-    const paymentLink = await payos.createPaymentLink(order);
-
-    res.json({ url: paymentLink.checkoutUrl });
-  } catch (error) {
-    console.error('Payment link error:', error);
-    res.status(500).json({ error: 'Failed to create payment link' });
-  }
 });
+
 
 // PayOS webhook handler - verifies payment & sends email
 app.post('/payos-webhook', async (req, res) => {
