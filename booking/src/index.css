@@ -1,0 +1,7 @@
+*{
+    margin: 0;
+}
+body{
+    height: 100vh;
+    background-image: linear-gradient(#b2fff9, #6dd3ff);
+}
