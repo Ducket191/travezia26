@@ -16,7 +16,7 @@ const payos = new PayOS(
 );
 
 const PORT = process.env.PORT || 3000;
-const YOUR_DOMAIN = `http://localhost:${PORT}`;
+const YOUR_DOMAIN = `https://trave26.onrender.com`;
 
 app.post('/send-email', async (req, res) => {
     const { email, name, phonenumber, ticketCount } = req.body;
