@@ -95,7 +95,7 @@ function App() {
 
   const handlePayment = async () => {
     try {
-        const response = await fetch('https://trave26.onrender.com/create-payment-link', {
+        const response = await fetch('const YOUR_DOMAIN = `http://localhost:3000/create-payment-link', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
