@@ -2,24 +2,56 @@ const express = require('express');
 const PayOS = require('@payos/node');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-require('dotenv').config(); // Load environment variables
-
-const payos = new PayOS(
-    process.env.PAYOS_CLIENT_ID, 
-    process.env.PAYOS_API_KEY, 
-    process.env.PAYOS_CHECKSUM_KEY
-);
-
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
 
+const payos = new PayOS(
+  process.env.PAYOS_CLIENT_ID,
+  process.env.PAYOS_API_KEY,
+  process.env.PAYOS_CHECKSUM_KEY
+);
 
-const YOUR_DOMAIN = 'https://trave26.onrender.com';
+const PORT = process.env.PORT || 3000;
+const YOUR_DOMAIN = `https://trave26.onrender.com`;
 
-// Create payment link
+// In-memory store for orders pending payment confirmation
+const pendingOrders = new Map();
+
+// Email sending function reused in routes & webhook
+async function sendConfirmationEmail({ email, name, phonenumber, ticketCount }) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    tls: { rejectUnauthorized: false },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Xác nhận đăng ký vé Travezia',
+    text: `Xin chào ${name},
+
+Cảm ơn bạn đã đăng kí vé tham dự Travézia XXIII: Retro Spins!
+Thông tin của bạn:
+- Họ và tên: ${name}
+- Email: ${email}
+- Số điện thoại: ${phonenumber}
+- Số lượng vé: ${ticketCount}
+
+Trân trọng,
+Glee Ams,`
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+
 app.post('/create-payment-link', async (req, res) => {
     try {
         const { amount, orderCode } = req.body;
@@ -43,122 +75,40 @@ app.post('/create-payment-link', async (req, res) => {
     }
 });
 
-// Send email function
-app.post('/send-email', async (req, res) => {
-    const { email, name, phonenumber, ticketCount } = req.body;
-
-    try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
-            tls: {
-                rejectUnauthorized: false,
-            },
-        });
-
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Xác nhận đăng ký vé Travezia',
-            text: `Xin chào ${name},
-
-Cảm ơn bạn đã đăng kí vé tham dự Travézia XXIII: Retro Spins!
-Thông tin của bạn:
-- Họ và tên: ${name}
-- Email: ${email}
-- Số điện thoại: ${phonenumber}
-- Số lượng vé: ${ticketCount}
-
-Trân trọng,
-Glee Ams,`
-        };
-
-        await transporter.sendMail(mailOptions);
-        res.status(200).json({ message: '✅ Email sent successfully!' });
-    } catch (error) {
-        console.error('❌ Error sending email:', error);
-        res.status(500).json({ message: 'Failed to send email', error });
-    }
-});
-
+// PayOS webhook handler - verifies payment & sends email
 app.post('/payos-webhook', async (req, res) => {
-    try {
-        console.log('📩 Received webhook:', req.body);
-
-        const webhookData = payos.verifyPaymentWebhookData(req.body); // Verify signature
-        if (!webhookData) {
-            return res.status(400).json({ message: '❌ Invalid webhook signature' });
-        }
-
-        const { orderCode, code, desc, amount } = webhookData.data;
-
-        if (!orderCode || !code) {
-            return res.status(400).json({ message: '❌ Missing order data.' });
-        }
-
-        if (code === '00') { // ✅ Payment successful
-            console.log(`✅ Payment successful for order: ${orderCode} (Amount: ${amount} VND)`);
-
-            // Extract extraData if available
-            const { name, phone, email, ticketCount } = req.body.extraData
-                ? JSON.parse(req.body.extraData)
-                : {};
-
-            if (!name || !phone || !email || !ticketCount) {
-                console.warn('⚠️ Missing extraData. Cannot save user or send email.');
-                return res.status(400).json({ message: '❌ Missing extraData.' });
-            }
-
-            // 1️⃣ Add user to MongoDB
-            try {
-                const addUserResponse = await fetch('https://trave26.onrender.com/Infor/add', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, email, ticketCount }),
-                });
-
-                if (!addUserResponse.ok) {
-                    throw new Error(`Failed to add user to DB: ${addUserResponse.statusText}`);
-                }
-                console.log(`📌 User added to database: ${name} - ${email}`);
-            } catch (err) {
-                console.error('❌ Error adding user to DB:', err);
-            }
-
-            // 2️⃣ Send confirmation email
-            try {
-                const emailResponse = await fetch('hhttps://trave26.onrender.com/send-email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, name, phonenumber: phone, ticketCount }),
-                });
-
-                if (!emailResponse.ok) {
-                    throw new Error(`Failed to send email: ${emailResponse.statusText}`);
-                }
-                console.log(`📧 Email sent to ${email}`);
-            } catch (err) {
-                console.error('❌ Error sending confirmation email:', err);
-            }
-
-            return res.status(200).json({ message: '✅ Payment verified, email sent, and user added to DB.' });
-        } else {
-            console.warn(`❌ Payment failed for order ${orderCode}: ${desc}`);
-            return res.status(400).json({ message: `❌ Payment failed: ${desc}` });
-        }
-    } catch (error) {
-        console.error('❌ Webhook error:', error);
-        res.status(500).json({ message: 'Internal server error.' });
+  try {
+    const paymentData = payos.verifyPaymentWebhookData(req.body);
+    if (!paymentData) {
+      console.warn('Invalid webhook signature');
+      return res.sendStatus(400);
     }
+
+    const { code, desc, orderCode } = paymentData.data;
+
+    if (code !== '00') {
+      console.warn(`Payment failed: ${desc}`);
+      return res.sendStatus(200); // Respond 200 so PayOS won't retry repeatedly
+    }
+
+    const orderInfo = pendingOrders.get(orderCode);
+    if (!orderInfo) {
+      console.error('Order info not found for:', orderCode);
+      return res.sendStatus(200);
+    }
+
+    await sendConfirmationEmail(orderInfo);
+    console.log('Confirmation email sent to', orderInfo.email);
+
+    pendingOrders.delete(orderCode); // Clean up
+
+    return res.sendStatus(200);
+  } catch (error) {
+    console.error('Webhook error:', error);
+    return res.sendStatus(200);
+  }
 });
 
-
-
-// Start server
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
