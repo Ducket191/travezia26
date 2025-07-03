@@ -63,7 +63,7 @@ app.post('/create-payment-link', async (req, res) => {
 
       const order = {
         amount,
-        description: "1111111111111111111111111",
+        description: "thanh toan",
         orderCode,
         returnUrl: `${YOUR_DOMAIN}/success.html`,
         cancelUrl: `${YOUR_DOMAIN}/cancel.html`
