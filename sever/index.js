@@ -60,7 +60,7 @@ app.post('/create-payment-link', async (req, res) => {
             return res.status(400).json({ error: 'Amount and orderCode are required' });
         }
 
-      const description = 
+      const Des = 
         `Thanh toán vé\n` +
         `Họ và tên: ${name || 'N/A'}\n` +
         `Email: ${email || 'N/A'}\n` +
@@ -68,7 +68,7 @@ app.post('/create-payment-link', async (req, res) => {
 
       const order = {
         amount,
-        description,
+        description: Des,
         orderCode,
         returnUrl: `${YOUR_DOMAIN}/success.html`,
         cancelUrl: `${YOUR_DOMAIN}/cancel.html`
