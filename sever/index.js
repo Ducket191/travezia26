@@ -54,21 +54,16 @@ Glee Ams,`
 
 app.post('/create-payment-link', async (req, res) => {
     try {
-        const { amount, orderCode, email, name, phonenumber } = req.body;
+        const { amount, orderCode } = req.body;
 
         if (!amount || !orderCode) {
             return res.status(400).json({ error: 'Amount and orderCode are required' });
         }
 
-      const Des = 
-        `Thanh toán vé\n` +
-        `Họ và tên: ${name || 'N/A'}\n` +
-        `Email: ${email || 'N/A'}\n` +
-        `Số điện thoại: ${phonenumber || 'N/A'}`;
 
       const order = {
         amount,
-        description: Des,
+        description: "thanh toan",
         orderCode,
         returnUrl: `${YOUR_DOMAIN}/success.html`,
         cancelUrl: `${YOUR_DOMAIN}/cancel.html`

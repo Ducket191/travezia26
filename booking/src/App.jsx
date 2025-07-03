@@ -100,10 +100,7 @@ function App() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 amount: selectedTickets * 10000, // Calculate total price
-                orderCode: Date.now(), // Generate a unique order code
-                email: Email,
-                name: Name,
-                phonenumber: Phonenumber,
+                orderCode: Date.now() // Generate a unique order code
             })
         });
 
