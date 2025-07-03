@@ -103,7 +103,7 @@ function App() {
                 orderCode: Date.now(), // Generate a unique order code
                 email: Email,
                 name: Name,
-                phonenumber: Phonenumber
+                phonenumber: Phonenumber,
             })
         });
 
