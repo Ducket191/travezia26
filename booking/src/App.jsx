@@ -256,7 +256,7 @@ function App() {
             <p>Một lần nữa, Glee Ams xin chân thành cảm ơn sự quan tâm của quý khách dành cho Travézia XXIII: Retro Spins.</p>
             <p><strong>Trân trọng!</strong></p>
             <br/>
-            <button type="button" onClick={nextStage}>Thanh toán</button>
+            <button type="button" onClick={handleSendEmail}>Thanh toán</button>
           </div>
         </div>
       )}
