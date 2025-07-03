@@ -16,7 +16,7 @@ const payos = new PayOS(
 );
 
 const PORT = process.env.PORT || 3000;
-const YOUR_DOMAIN = `http://localhost:3000`;
+const YOUR_DOMAIN = `https://trave26.onrender.com`;
 
 // In-memory store for orders pending payment confirmation
 const pendingOrders = new Map();
