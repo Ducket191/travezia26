@@ -109,6 +109,47 @@ app.post('/payos-webhook', async (req, res) => {
   }
 });
 
+//send email func
+app.post('/send-email', async (req, res) => {
+    const { email, name, phonenumber, ticketCount } = req.body;
+
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+            tls: {
+                rejectUnauthorized: false,
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Xác nhận đăng ký vé Travezia',
+            text: `Xin chào ${name},
+
+Cảm ơn bạn đã đăng kí vé tham dự Travézia XXIII: Retro Spins!
+Thông tin của bạn:
+- Họ và tên: ${name}
+- Email: ${email}
+- Số điện thoại: ${phonenumber}
+- Số lượng vé: ${ticketCount}
+
+Trân trọng,
+Glee Ams,`
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({ message: '✅ Email sent successfully!' });
+    } catch (error) {
+        console.error('❌ Error sending email:', error);
+        res.status(500).json({ message: 'Failed to send email', error });
+    }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
