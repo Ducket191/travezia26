@@ -74,7 +74,7 @@ function App() {
     e.preventDefault();
 
     try {
-        const response = await axios.post('http://localhost:3000/send-email', {  
+        const response = await axios.post('https://trave26.onrender.com/send-email', {  
             name: Name,
             email: Email,
             phonenumber: Phonenumber,
@@ -100,7 +100,10 @@ function App() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 amount: selectedTickets * 10000, // Calculate total price
-                orderCode: Date.now() // Generate a unique order code
+                orderCode: Date.now(), // Generate a unique order code
+                email: Email,
+                name: Name,
+                phonenumber: Phonenumber
             })
         });
 
@@ -262,7 +265,7 @@ function App() {
       )}
       {stage === 2 && (
         <div>
-          <button onClick={handlePayment}>Xác nhận</button> 
+          <button onClick={handlePayment}>Đi đến trang thanh toán</button> 
         </div>
       )}
       {stage === 3 && (

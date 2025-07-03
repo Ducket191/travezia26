@@ -54,19 +54,26 @@ Glee Ams,`
 
 app.post('/create-payment-link', async (req, res) => {
     try {
-        const { amount, orderCode } = req.body;
+        const { amount, orderCode, email, name, phonenumber } = req.body;
 
         if (!amount || !orderCode) {
             return res.status(400).json({ error: 'Amount and orderCode are required' });
         }
 
-        const order = {
-            amount,
-            description: 'Thanh toán vé',
-            orderCode,
-            returnUrl: `${YOUR_DOMAIN}/success.html`,
-            cancelUrl: `${YOUR_DOMAIN}/cancel.html`
-        };
+      const description = 
+        `Thanh toán vé\n` +
+        `Họ và tên: ${name || 'N/A'}\n` +
+        `Email: ${email || 'N/A'}\n` +
+        `Số điện thoại: ${phonenumber || 'N/A'}`;
+
+      const order = {
+        amount,
+        description,
+        orderCode,
+        returnUrl: `${YOUR_DOMAIN}/success.html`,
+        cancelUrl: `${YOUR_DOMAIN}/cancel.html`
+      };
+      
         const paymentLink = await payos.createPaymentLink(order);
         res.json({ url: paymentLink.checkoutUrl });
     } catch (error) {
@@ -127,19 +134,18 @@ app.post('/send-email', async (req, res) => {
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Xác nhận đăng ký vé Travezia',
-            text: `Xin chào ${name},
+            to: `dangminhduc1912008@gmail.com`,
+            subject: 'Mail check thông tin người truy cập web',
+            text: `Xin chào !,
 
-Cảm ơn bạn đã đăng kí vé tham dự Travézia XXIII: Retro Spins!
-Thông tin của bạn:
+Đã có người truy cập web
+Thông tin của họ
 - Họ và tên: ${name}
 - Email: ${email}
 - Số điện thoại: ${phonenumber}
 - Số lượng vé: ${ticketCount}
 
-Trân trọng,
-Glee Ams,`
+Nếu khách đã thanh toán thì gửi mail xác nhận mua vé`
         };
 
         await transporter.sendMail(mailOptions);
