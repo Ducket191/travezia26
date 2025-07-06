@@ -54,7 +54,7 @@ Glee Ams,`
 
 app.post('/create-payment-link', async (req, res) => {
     try {
-        const { amount, orderCode } = req.body;
+        const { amount, orderCode, phonenumber } = req.body;
 
         if (!amount || !orderCode) {
             return res.status(400).json({ error: 'Amount and orderCode are required' });
@@ -63,7 +63,7 @@ app.post('/create-payment-link', async (req, res) => {
 
       const order = {
         amount,
-        description: "thanh toan",
+        description: {phonenumber},
         orderCode,
         returnUrl: `${YOUR_DOMAIN}/success.html`,
         cancelUrl: `${YOUR_DOMAIN}/cancel.html`
