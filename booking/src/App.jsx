@@ -230,7 +230,7 @@ function App() {
           <button type="submit">Tiếp theo</button>
         </form>
       )}
-      {stage === 1 && (
+      {stage === 4 && (
         <div>
           <h2>Chọn chỗ ngồi</h2>
           <div className='Soluongve'>
@@ -250,7 +250,7 @@ function App() {
           <button onClick={backStage}>Quay lại</button>
         </div>
       )}
-      {stage === 2 && (
+      {stage === 1 && (
         <div className="payinginfor">
           <h1>Hoàn tất thanh toán</h1>
           <div>
@@ -283,11 +283,11 @@ function App() {
             <p>Một lần nữa, Glee Ams xin chân thành cảm ơn sự quan tâm của quý khách dành cho Travézia XXIII: Retro Spins.</p>
             <p><strong>Trân trọng!</strong></p>
             <br/>
-            <button type="button" onClick={handleSendEmail}>Thanh toán</button>
+            <button type="button" onClick={nextStage}>Thanh toán</button>
           </div>
         </div>
       )}
-      {stage === 3 && (
+      {stage === 2 && (
         <div>
           <button onClick={handlePayment}>Đi đến trang thanh toán</button> 
         </div>
