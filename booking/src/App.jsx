@@ -95,6 +95,14 @@ function App() {
 
   const handlePayment = async () => {
     try {
+        const userData = {
+          name: Name,
+          email: Email,
+          phonenumber: Phonenumber,
+          ticketCount: selectedTickets
+        };
+        localStorage.setItem("travezia-user", JSON.stringify(userData));
+
         const response = await fetch('https://trave26.onrender.com/create-payment-link', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

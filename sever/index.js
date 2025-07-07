@@ -130,17 +130,18 @@ app.post('/send-email', async (req, res) => {
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: `dangminhduc1912008@gmail.com`,
-            subject: 'Mail check thông tin người truy cập web',
-            text: `Xin chào !,
+            subject: 'Xác nhận đăng ký vé Traveziab',
+            text: `Xin chào ${name}!,
 
-Đã có người truy cập web
-Thông tin của họ
+Cảm ơn bạn đã đăng kí vé tham dự Travézia XXIII: Retro Spins!
+Thông tin của bạn:
 - Họ và tên: ${name}
 - Email: ${email}
 - Số điện thoại: ${phonenumber}
 - Số lượng vé: ${ticketCount}
 
-Nếu khách đã thanh toán thì gửi mail xác nhận mua vé`
+Trân trọng,
+Glee Ams`
         };
 
         await transporter.sendMail(mailOptions);

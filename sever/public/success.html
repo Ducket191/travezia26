@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thanh toán thành công</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh toán thành công</title>
 </head>
 <body>
-    <h1>🎉 Thanh toán thành công!</h1>
-    <p>Cảm ơn bạn đã mua vé. Vui lòng kiểm tra email của bạn để nhận vé.</p>
-    <a href="http://localhost:5173/">Quay lại trang chủ</a>
+  <h1>🎉 Thanh toán thành công!</h1>
+  <p>Cảm ơn bạn đã mua vé. Vui lòng kiểm tra email của bạn để nhận vé.</p>
+  <a href="http://localhost:5173/">Quay lại trang chủ</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    window.onload = async () => {
+      const userData = JSON.parse(localStorage.getItem("travezia-user"));
+
+      if (!userData) {
+        console.warn("⚠️ Không tìm thấy thông tin người dùng trong localStorage.");
+        return;
+      }
+
+      try {
+        const res = await axios.post('https://trave26.onrender.com/send-email', userData);
+        console.log('✅ Email đã được gửi:', res.data.message);
+        localStorage.removeItem("travezia-user");
+      } catch (err) {
+        console.error('❌ Lỗi khi gửi email xác nhận:', err);
+      }
+    };
+  </script>
 </body>
 </html>
