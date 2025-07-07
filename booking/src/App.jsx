@@ -7,121 +7,119 @@ function App() {
   const [Phonenumber, setPhonenumber] = useState('');
   const [Email, setEmail] = useState('');
   const [selectedTickets, setSelectedTickets] = useState(null);
+  const [SeatCount, setSeatCount] = useState(null);
+  const [selectedSeats, setSelectedSeats] = useState([]);
   const [stage, setStage] = useState(-1);
+  const Seat = ["A1", "A2", "A3", "A4"];
 
-
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-
-
-  const handlePhonenumberChange = (event) => {
-    setPhonenumber(event.target.value);
-  };
-
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
+  const handleNameChange = (event) => setName(event.target.value);
+  const handlePhonenumberChange = (event) => setPhonenumber(event.target.value);
+  const handleEmailChange = (event) => setEmail(event.target.value);
 
   const handleSelection = (value) => {
     setSelectedTickets(value);
+    setSeatCount(value);
+    setSelectedSeats([]); // reset seat selection
   };
 
+  const handleSeatChosen = (seat) => {
+    const isSelected = selectedSeats.includes(seat);
 
-  const handleSubmit = (event) => {
-    if (selectedTickets != null) {
-      event.preventDefault(); // Prevent page reload
-      console.log('Submitted:', { Name, Phonenumber, Email, selectedTickets });
-      nextStage();  // Proceed to the next stage
+    if (!isSelected) {
+      if (selectedSeats.length < SeatCount) {
+        setSelectedSeats([...selectedSeats, seat]);
+      } else {
+        alert("Đã chọn đủ chỗ ngồi!");
+      }
     } else {
-      event.preventDefault(); // Prevent page reload in case of invalid selection
-      // Show an error message or handle as needed
-      setErrors({ ...errors, selectedTickets: 'Bạn phải chọn số lượng vé' });  // Add error to state
+      setSelectedSeats(selectedSeats.filter(s => s !== seat));
     }
   };
 
-
-  const nextStage = () => {
-    setStage(stage + 1);  // Corrected increment of stage
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (selectedTickets != null) {
+      console.log('Submitted:', { Name, Phonenumber, Email, selectedTickets });
+      nextStage();
+    } else {
+      alert('Bạn phải chọn số lượng vé');
+    }
   };
-  const backStage = () => {
-    setStage(stage - 1);  // Corrected increment of stage
-  };
 
+  const nextStage = () => setStage(stage + 1);
+  const backStage = () => setStage(stage - 1);
 
   const handleAdd = () => {
-    axios
-      .post('http://localhost:3000/Infor/add', {  // Chỉnh API
-        name: Name,
-        phone: Phonenumber,
-        email: Email,
-        ticketCount: selectedTickets,
-      })
-      .then((result) => {
-        console.log('Submission successful:', result.data);
-        alert('Thông tin đã được gửi thành công!');
-      })
-      .catch((err) => {
-        console.error('Error submitting data:', err);
-        alert('Đã xảy ra lỗi khi gửi thông tin. Vui lòng thử lại sau ít phút.');
-      });
+    axios.post('http://localhost:3000/Infor/add', {
+      name: Name,
+      phone: Phonenumber,
+      email: Email,
+      ticketCount: selectedTickets,
+    })
+    .then((result) => {
+      console.log('Submission successful:', result.data);
+      alert('Thông tin đã được gửi thành công!');
+    })
+    .catch((err) => {
+      console.error('Error submitting data:', err);
+      alert('Đã xảy ra lỗi khi gửi thông tin. Vui lòng thử lại sau ít phút.');
+    });
     nextStage();
   };
-  
+
   const handleSendEmail = async (e) => {
     e.preventDefault();
-
     try {
-        const response = await axios.post('https://trave26.onrender.com/send-email', {  
-            name: Name,
-            email: Email,
-            phonenumber: Phonenumber,
-            ticketCount: selectedTickets,
-        });
+      const response = await axios.post('https://trave26.onrender.com/send-email', {
+        name: Name,
+        email: Email,
+        phonenumber: Phonenumber,
+        ticketCount: selectedTickets,
+        seats: selectedSeats,
+      });
 
-        if (response.status === 200) {
-            alert(response.data.message); // Success message
-            nextStage();
-        } else {
-            alert('Đã xảy ra lỗi khi gửi email. Vui lòng thử lại.');
-        }
-    } catch (error) {
-        console.error('Error sending email:', error);
+      if (response.status === 200) {
+        alert(response.data.message);
+        nextStage();
+      } else {
         alert('Đã xảy ra lỗi khi gửi email. Vui lòng thử lại.');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      alert('Đã xảy ra lỗi khi gửi email. Vui lòng thử lại.');
     }
   };
 
   const handlePayment = async () => {
     try {
-        const userData = {
-          name: Name,
-          email: Email,
-          phonenumber: Phonenumber,
-          ticketCount: selectedTickets
-        };
-        localStorage.setItem("travezia-user", JSON.stringify(userData));
+      const userData = {
+        name: Name,
+        email: Email,
+        phonenumber: Phonenumber,
+        ticketCount: selectedTickets,
+        seats: selectedSeats,
+      };
+      localStorage.setItem("travezia-user", JSON.stringify(userData));
 
-        const response = await fetch('https://trave26.onrender.com/create-payment-link', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                amount: selectedTickets * 10000, // Calculate total price
-                orderCode: Date.now(), // Generate a unique order code
-                phonenumber: Phonenumber
-            })
-        });
+      const response = await fetch('https://trave26.onrender.com/create-payment-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: selectedTickets * 10000,
+          orderCode: Date.now(),
+          phonenumber: Phonenumber
+        })
+      });
 
-        const data = await response.json();
-        if (data.url) {
-            window.location.href = data.url; // Redirect to the payment page
-        } else {
-            alert('Lỗi khi tạo link thanh toán');
-        }
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Lỗi khi tạo link thanh toán');
+      }
     } catch (error) {
-        console.error('Error:', error);
-        alert('Có lỗi xảy ra, vui lòng thử lại!');
+      console.error('Error:', error);
+      alert('Có lỗi xảy ra, vui lòng thử lại!');
     }
   };
 
@@ -233,6 +231,26 @@ function App() {
         </form>
       )}
       {stage === 1 && (
+        <div>
+          <h2>Chọn chỗ ngồi</h2>
+          <div className='Soluongve'>
+            {Seat.map((x) => (
+              <button
+                key={x}
+                onClick={() => handleSeatChosen(x)}
+                type="button"
+                className={selectedSeats.includes(x) ? 'selected' : 'ticket-button'}
+              >
+                {x}
+              </button>
+            ))}
+          </div>
+          <p>Đã chọn: {selectedSeats.join(', ') || 'Chưa chọn'}</p>
+          <button onClick={nextStage}>Tiếp theo</button>
+          <button onClick={backStage}>Quay lại</button>
+        </div>
+      )}
+      {stage === 2 && (
         <div className="payinginfor">
           <h1>Hoàn tất thanh toán</h1>
           <div>
@@ -269,14 +287,9 @@ function App() {
           </div>
         </div>
       )}
-      {stage === 2 && (
-        <div>
-          <button onClick={handlePayment}>Đi đến trang thanh toán</button> 
-        </div>
-      )}
       {stage === 3 && (
         <div>
-          Xong rồi
+          <button onClick={handlePayment}>Đi đến trang thanh toán</button> 
         </div>
       )}
     </div>
