@@ -4,13 +4,14 @@
     "@payos/node": "^1.0.10",
     "dotenv": "^16.5.0",
     "node-fetch": "^3.3.2",
-    "nodemailer": "^7.0.3"
+    "nodemailer": "^7.0.3",
+    "react-scripts": "^5.0.1"
   },
   "devDependencies": {
     "gh-pages": "^6.3.0"
   },
   "scripts": {
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d build"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   }
 }
