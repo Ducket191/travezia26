@@ -1,4 +1,6 @@
 {
+  "name": "travezia26",
+  "version": "1.0.0",
   "homepage": "https://Ducket191.github.io/travezia26",
   "dependencies": {
     "@payos/node": "^1.0.10",
@@ -11,6 +13,10 @@
     "gh-pages": "^6.3.0"
   },
   "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   }
