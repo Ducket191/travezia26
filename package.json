@@ -1,8 +1,16 @@
 {
+  "homepage": "https://Ducket191.github.io/travezia26",
   "dependencies": {
     "@payos/node": "^1.0.10",
     "dotenv": "^16.5.0",
     "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.3"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  },
+  "scripts": {
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d build"
   }
 }
