@@ -75,7 +75,6 @@ function App() {
         email: Email,
         phonenumber: Phonenumber,
         ticketCount: selectedTickets,
-        seats: selectedSeats,
       });
 
       if (response.status === 200) {
