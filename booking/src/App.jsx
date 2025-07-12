@@ -90,39 +90,42 @@ function App() {
   };
 
 
-  const handlePayment = async () => {
-    handleSendEmail();
-    try {
-      const userData = {
-        name: Name,
-        email: Email,
+const handlePayment = async () => {
+
+  try {
+    const userData = {
+      name: Name,
+      email: Email,
+      phonenumber: Phonenumber,
+      ticketCount: selectedTickets,
+      seats: selectedSeats.join(','), // convert to comma-separated string
+    };
+
+    const queryString = new URLSearchParams(userData).toString();
+
+    const response = await fetch('https://trave26.onrender.com/create-payment-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: selectedTickets * 10000,
+        orderCode: Date.now(),
         phonenumber: Phonenumber,
-        ticketCount: selectedTickets,
-        seats: selectedSeats,
-      };
-      localStorage.setItem("travezia-user", JSON.stringify(userData));
+        redirectUrl: `https://tickettravezia.netlify.app/success.html?${queryString}`
+      })
+    });
 
-      const response = await fetch('https://trave26.onrender.com/create-payment-link', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: selectedTickets * 10000,
-          orderCode: Date.now(),
-          phonenumber: Phonenumber
-        })
-      });
+    const data = await response.json();
 
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Lỗi khi tạo link thanh toán');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Có lỗi xảy ra, vui lòng thử lại!');
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('Lỗi khi tạo link thanh toán');
     }
-  };
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Có lỗi xảy ra, vui lòng thử lại!');
+  }
+};
 
 
 
@@ -284,7 +287,7 @@ function App() {
             <p>Một lần nữa, Glee Ams xin chân thành cảm ơn sự quan tâm của quý khách dành cho Travézia XXIII: Retro Spins.</p>
             <p><strong>Trân trọng!</strong></p>
             <br/>
-            <button type="button" onClick={handlePayment}>Thanh toán</button>
+            <button type="button" onClick={handleSendEmail}>Thanh toán</button>
           </div>
         </div>
       )}

@@ -10,24 +10,30 @@
   <p>Cảm ơn bạn đã mua vé. Vui lòng kiểm tra email của bạn để nhận vé.</p>
   <a href="https://tickettravezia.netlify.app/">Quay lại trang chủ</a>
 
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script>
-    window.onload = async () => {
-      const userData = JSON.parse(localStorage.getItem("travezia-user"));
-
-      if (!userData) {
-        console.warn("⚠️ Không tìm thấy thông tin người dùng trong localStorage.");
-        return;
-      }
-
-      try {
-        const res = await axios.post('https://trave26.onrender.com/send-email', userData);
-        console.log('✅ Email đã được gửi:', res.data.message);
-        localStorage.removeItem("travezia-user");
-      } catch (err) {
-        console.error('❌ Lỗi khi gửi email xác nhận:', err);
-      }
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  window.onload = async () => {
+    const params = new URLSearchParams(window.location.search);
+    const userData = {
+      name: params.get('name'),
+      email: params.get('email'),
+      phonenumber: params.get('phonenumber'),
+      ticketCount: parseInt(params.get('ticketCount')) || 0,
+      seats: params.get('seats')?.split(',') || []
     };
-  </script>
+
+    if (!userData.name || !userData.email) {
+      console.warn("⚠️ Không tìm thấy thông tin người dùng trong URL.");
+      return;
+    }
+
+    try {
+      const res = await axios.post('https://trave26.onrender.com/send-email', userData);
+      console.log('✅ Email đã được gửi:', res.data.message);
+    } catch (err) {
+      console.error('❌ Lỗi khi gửi email xác nhận:', err);
+    }
+  };
+</script>
 </body>
 </html>
