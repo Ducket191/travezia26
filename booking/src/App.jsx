@@ -70,7 +70,7 @@ function App() {
   const handleSendEmail = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://trave26.onrender.com/send-email', {
+      const response = await axios.post('https://trave26.onrender.com//send-alertemail', {
         name: Name,
         email: Email,
         phonenumber: Phonenumber,
@@ -89,7 +89,9 @@ function App() {
     }
   };
 
+
   const handlePayment = async () => {
+    handleSendEmail();
     try {
       const userData = {
         name: Name,
