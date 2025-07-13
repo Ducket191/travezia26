@@ -6,8 +6,8 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 
-app.use('/payos-webhook', bodyParser.raw({ type: '*/*' }));
 const app = express();
+app.use('/payos-webhook', bodyParser.raw({ type: '*/*' }));
 app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
