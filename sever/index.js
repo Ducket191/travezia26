@@ -80,39 +80,42 @@ app.post('/create-payment-link', async (req, res) => {
     }
 });
 
-// PayOS webhook handler - verifies payment & sends email
 app.post('/payos-webhook', async (req, res) => {
   try {
-    const paymentData = payos.verifyPaymentWebhookData(req.body);
+    const rawBody = req.body.toString('utf8');  // Convert buffer to string
+    const parsedBody = JSON.parse(rawBody);     // Parse it to JSON
+
+    const paymentData = payos.verifyPaymentWebhookData(parsedBody); // ✅ Now it's correct
 
     if (!paymentData || !paymentData.data) {
-      console.warn('Invalid webhook signature or data missing');
+      console.warn('❌ Invalid webhook or no data');
       return res.sendStatus(400);
     }
 
     const { code, desc, orderCode } = paymentData.data;
 
     if (code !== '00') {
-      console.warn(`Payment failed: ${desc}`);
+      console.warn(`❌ Payment failed: ${desc}`);
       return res.sendStatus(200);
     }
 
     const orderInfo = pendingOrders.get(orderCode);
     if (!orderInfo) {
-      console.error('Order info not found for:', orderCode);
+      console.error('❌ Order info not found for:', orderCode);
       return res.sendStatus(200);
     }
 
     await sendConfirmationEmail(orderInfo);
-    console.log('✅ Email sent to:', orderInfo.email);
-    pendingOrders.delete(orderCode);
+    console.log('✅ Confirmation email sent to:', orderInfo.email);
 
+    pendingOrders.delete(orderCode); // Clean up
     return res.sendStatus(200);
   } catch (error) {
-    console.error('Webhook error:', error);
-    return res.sendStatus(200);
+    console.error('❌ Webhook error:', error);
+    return res.sendStatus(200); // still return 200 to stop retries
   }
 });
+
 
 
 //send email func
