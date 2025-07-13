@@ -92,24 +92,16 @@ function App() {
 const handlePayment = async () => {
 
   try {
-    const userData = {
-      name: Name,
-      email: Email,
-      phonenumber: Phonenumber,
-      ticketCount: selectedTickets,
-      seats: selectedSeats.join(','), // convert to comma-separated string
-    };
-
-    const queryString = new URLSearchParams(userData).toString();
-
     const response = await fetch('https://trave26.onrender.com/create-payment-link', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         amount: selectedTickets * 10000,
         orderCode: Date.now(),
+        email: Email,
+        name: Name,
         phonenumber: Phonenumber,
-        redirectUrl: `https://tickettravezia.netlify.app/success.html?${queryString}`
+        ticketCount: selectedTickets,
       })
     });
 
