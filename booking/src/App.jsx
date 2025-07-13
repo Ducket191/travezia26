@@ -77,15 +77,8 @@ function App() {
         ticketCount: selectedTickets,
       });
 
-      if (response.status === 200) {
-        alert(response.data.message);
-        nextStage();
-      } else {
-        alert('Đã xảy ra lỗi khi gửi email. Vui lòng thử lại.');
-      }
     } catch (error) {
       console.error('Error sending email:', error);
-      alert('Đã xảy ra lỗi khi gửi email. Vui lòng thử lại.');
     }
   };
 
