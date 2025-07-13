@@ -3,7 +3,10 @@ const PayOS = require('@payos/node');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const bodyParser = require('body-parser');
+const crypto = require('crypto');
 
+app.use('/payos-webhook', bodyParser.raw({ type: '*/*' }));
 const app = express();
 app.use(cors());
 app.use(express.static('public'));
@@ -81,8 +84,9 @@ app.post('/create-payment-link', async (req, res) => {
 app.post('/payos-webhook', async (req, res) => {
   try {
     const paymentData = payos.verifyPaymentWebhookData(req.body);
-    if (!paymentData) {
-      console.warn('Invalid webhook signature');
+
+    if (!paymentData || !paymentData.data) {
+      console.warn('Invalid webhook signature or data missing');
       return res.sendStatus(400);
     }
 
@@ -90,7 +94,7 @@ app.post('/payos-webhook', async (req, res) => {
 
     if (code !== '00') {
       console.warn(`Payment failed: ${desc}`);
-      return res.sendStatus(200); // Respond 200 so PayOS won't retry repeatedly
+      return res.sendStatus(200);
     }
 
     const orderInfo = pendingOrders.get(orderCode);
@@ -100,9 +104,8 @@ app.post('/payos-webhook', async (req, res) => {
     }
 
     await sendConfirmationEmail(orderInfo);
-    console.log('Confirmation email sent to', orderInfo.email);
-
-    pendingOrders.delete(orderCode); // Clean up
+    console.log('✅ Email sent to:', orderInfo.email);
+    pendingOrders.delete(orderCode);
 
     return res.sendStatus(200);
   } catch (error) {
@@ -110,6 +113,7 @@ app.post('/payos-webhook', async (req, res) => {
     return res.sendStatus(200);
   }
 });
+
 
 //send email func
 app.post('/send-email', async (req, res) => {
