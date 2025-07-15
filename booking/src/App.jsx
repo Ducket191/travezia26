@@ -151,9 +151,9 @@ const handlePayment = async () => {
   <h3>Mọi thông tin xin liên hệ:</h3>
   <ul>
     <li><strong>Email:</strong> gleeams.2324@gmail.com</li>
-    <li><strong>Việt Linh:</strong> 086 668 4155</li>
-    <li><strong>Xuân Mai:</strong> 097 558 2876</li>
-    <li><strong>Hà Anh:</strong> 094 746 5390</li>
+    <li><strong>...:</strong>... </li>
+    <li><strong>...:</strong>...</li>
+    <li><strong>...:</strong>... </li>
   </ul>
   <br/>
 </ul>
@@ -251,8 +251,8 @@ const handlePayment = async () => {
           <div>
             <p>Cảm ơn quý khách đã đặt vé tham dự Travézia XXIII: Retro Spins. Glee Ams xin gửi thông tin thanh toán dưới đây:</p>
             <ul>
-              <li><strong>Giá vé:</strong> 119.000 VND/vé</li>
-              <li><strong>STK:</strong> 105880235117 - Ngân hàng Vietinbank - Tên tài khoản : Ngo Thai Uyen</li>
+              <li><strong>Giá vé:</strong> 119.000 VND/vé (gia ve dang la 10k luc test)</li>
+              <li><strong>STK:</strong> ...</li>
               <li><strong>Nội dung chuyển khoản:</strong> [HỌ VÀ TÊN - SỐ ĐIỆN THOẠI - SỐ LƯỢNG VÉ]</li>
               <li><strong>Thông tin người mua vé:</strong></li>
               <ul>
@@ -271,9 +271,9 @@ const handlePayment = async () => {
             </ul>
             <p>Nếu có sai sót về thông tin đặt chỗ hoặc không nhận được email xác nhận 24 giờ từ khi quý khách thanh toán, vui lòng nhắn tin cho page Glee Ams để thông báo về vấn đề đang gặp phải. Hoặc quý khách có thể liên hệ một trong các số điện thoại sau:</p>
             <ul>
-              <li>Việt Linh (086 668 4155)</li>
-              <li>Xuân Mai (097 558 2876)</li>
-              <li>Hà Anh (094 746 5390)</li>
+              <li>...</li>
+              <li>...</li>
+              <li>...</li>
             </ul>
             <p>Một lần nữa, Glee Ams xin chân thành cảm ơn sự quan tâm của quý khách dành cho Travézia XXIII: Retro Spins.</p>
             <p><strong>Trân trọng!</strong></p>
