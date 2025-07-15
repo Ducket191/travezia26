@@ -51,12 +51,12 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
       return res.sendStatus(400);
     }
 
-    if (!paymentData || !paymentData.data) {
+    if (!paymentData || !paymentData.orderCode) {
       console.warn('❌ Invalid webhook or no data');
       return res.sendStatus(400);
     }
 
-    const { code, desc, orderCode } = paymentData.data;
+    const { code, desc, orderCode } = paymentData;
 
     if (code !== '00') {
       console.warn(`❌ Payment failed: ${desc}`);
