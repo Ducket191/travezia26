@@ -86,13 +86,9 @@ app.post('/create-payment-link', async (req, res) => {
   }
 });
 
-app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => {
+// ✅ Webhook route (proper raw handling)
+app.post('/payos-webhook', async (req, res) => {
   try {
-    if (!req.body || !Buffer.isBuffer(req.body)) {
-      console.warn('❌ No raw body received');
-      return res.sendStatus(400);
-    }
-
     const rawBody = req.body.toString('utf8');
     const parsedBody = JSON.parse(rawBody);
 
@@ -107,7 +103,7 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
 
     if (code !== '00') {
       console.warn(`❌ Payment failed: ${desc}`);
-      return res.sendStatus(200); // prevent retries
+      return res.sendStatus(200);
     }
 
     const orderInfo = pendingOrders.get(orderCode);
@@ -126,7 +122,6 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
     return res.sendStatus(200);
   }
 });
-
 
 // ✅ Manual email test
 app.post('/send-email', async (req, res) => {
