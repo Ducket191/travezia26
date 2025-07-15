@@ -63,7 +63,7 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
       return res.sendStatus(200);
     }
 
-    const orderInfo = pendingOrders.get(orderCode);
+    const orderInfo = pendingOrders.get(Number(orderCode));
     if (!orderInfo) {
       console.error('❌ Order info not found for:', orderCode);
       return res.sendStatus(200);
@@ -72,7 +72,7 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
     await sendConfirmationEmail(orderInfo);
     console.log('✅ Email sent to', orderInfo.email);
 
-    pendingOrders.delete(orderCode);
+    pendingOrders.delete(Number(orderCode));
     return res.sendStatus(200);
   } catch (error) {
     console.error('❌ Webhook error:', error);
@@ -120,7 +120,7 @@ app.post('/create-payment-link', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    pendingOrders.set(orderCode, { email, name, phonenumber, ticketCount });
+    pendingOrders.set(Number(orderCode), { email, name, phonenumber, ticketCount });
 
     const order = {
       amount,
