@@ -86,11 +86,16 @@ app.post('/create-payment-link', async (req, res) => {
   }
 });
 
-// ✅ PayOS Webhook: Validate, send email, clean up
-app.post('/payos-webhook', async (req, res) => {
+app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => {
   try {
+    if (!req.body || !Buffer.isBuffer(req.body)) {
+      console.warn('❌ No raw body received');
+      return res.sendStatus(400);
+    }
+
     const rawBody = req.body.toString('utf8');
     const parsedBody = JSON.parse(rawBody);
+
     const paymentData = payos.verifyPaymentWebhookData(parsedBody);
 
     if (!paymentData || !paymentData.data) {
@@ -112,15 +117,16 @@ app.post('/payos-webhook', async (req, res) => {
     }
 
     await sendConfirmationEmail(orderInfo);
-    console.log('✅ Confirmation email sent to:', orderInfo.email);
-    pendingOrders.delete(orderCode);
+    console.log('✅ Email sent to', orderInfo.email);
 
+    pendingOrders.delete(orderCode);
     return res.sendStatus(200);
   } catch (error) {
     console.error('❌ Webhook error:', error);
-    return res.sendStatus(200); // prevent retries
+    return res.sendStatus(200);
   }
 });
+
 
 // ✅ Manual email test
 app.post('/send-email', async (req, res) => {
