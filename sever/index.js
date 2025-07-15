@@ -25,11 +25,18 @@ const payos = new PayOS(
 // ✅ In-memory storage
 const pendingOrders = new Map();
 
-// ✅ Raw body middleware only for /payos-webhook
 app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => {
   try {
-    const rawBody = req.body.toString('utf8');
-    const parsedBody = JSON.parse(rawBody);
+    let parsedBody;
+
+    if (Buffer.isBuffer(req.body)) {
+      parsedBody = JSON.parse(req.body.toString('utf8'));
+    } else if (typeof req.body === 'object') {
+      parsedBody = req.body; // already parsed
+    } else {
+      console.warn('❌ Unexpected body format:', typeof req.body);
+      return res.sendStatus(400);
+    }
 
     const paymentData = payos.verifyPaymentWebhookData(parsedBody);
 
