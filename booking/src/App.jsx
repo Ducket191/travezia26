@@ -282,11 +282,6 @@ const handlePayment = async () => {
           </div>
         </div>
       )}
-      {stage === 2 && (
-        <div>
-          <button onClick={handlePayment}>Đi đến trang thanh toán</button> 
-        </div>
-      )}
     </div>
   );
 }
