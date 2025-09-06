@@ -4,7 +4,7 @@ const TicketInfoSchema = new mongoose.Schema({
     Name: String,
     Phone: String,
     Email: String,
-    Ticket: int,
+    Ticket: Number,
 });
 
 const TicketInforModel = mongoose.model('', TicketInfoSchema);
