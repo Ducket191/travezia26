@@ -225,7 +225,7 @@ const handlePayment = async () => {
           <button type="submit">Tiếp theo</button>
         </form>
       )}
-      {stage === 4 && (
+      {stage === 1 && (
         <div>
           <h2>Chọn chỗ ngồi</h2>
           <div className='Soluongve'>
@@ -245,7 +245,7 @@ const handlePayment = async () => {
           <button onClick={backStage}>Quay lại</button>
         </div>
       )}
-      {stage === 1 && (
+      {stage === 2 && (
         <div className="payinginfor">
           <h1>Hoàn tất thanh toán</h1>
           <div>
