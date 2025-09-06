@@ -10,7 +10,20 @@ function App() {
   const [SeatCount, setSeatCount] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [stage, setStage] = useState(-1);
-  const Seat = ["A1", "A2", "A3", "A4"];
+  const seats = [];
+
+  const rows = ["A","B","C","D","E","F","G","H","I"];
+  rows.forEach(row => {
+    for (let i = 1; i <= 30; i++) {  // adjust max number per row
+      seats.push(`${row}${i}`);
+    }
+  });
+
+
+  for (let i = 1; i <= 100; i++) {
+    seats.push(`S${i}`);
+  }
+
 
   const handleNameChange = (event) => setName(event.target.value);
   const handlePhonenumberChange = (event) => setPhonenumber(event.target.value);
@@ -229,7 +242,7 @@ const handlePayment = async () => {
         <div>
           <h2>Chọn chỗ ngồi</h2>
           <div className='Soluongve'>
-            {Seat.map((x) => (
+            {seats.map((x) => (
               <button
                 key={x}
                 onClick={() => handleSeatChosen(x)}
