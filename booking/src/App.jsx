@@ -240,7 +240,8 @@ const handlePayment = async () => {
       )}
       {stage === 1 && (
         <div>
-          <h2>Chọn chỗ ngồi</h2>
+          <h2>Chọn chỗ ngồi:</h2>
+          <h3>*Hạng ghế single bao gồm hàng S từ S1 đến S100 </h3>
           <div className="seat-grid">
             {seats.map((x) => (
               <button
