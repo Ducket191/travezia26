@@ -5,6 +5,8 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+const mongoose = require('mongoose');
+const route = require('./route/route');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +16,7 @@ const YOUR_DOMAIN = `https://trave26.onrender.com`;
 app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
+app.use('/', route);
 
 // ✅ PayOS config
 const payos = new PayOS(
@@ -189,3 +192,7 @@ Thông tin khách chưa thanh toán:
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+mongoose.connect(`mongodb+srv://dangminhduc1912008:dangminhduc1912008@ticketinfo.fzbsswy.mongodb.net/`)
+.then(() => console.log('Database is connected'))
+.catch((err) => console.error('Failed to connect to MongoDB', err));
