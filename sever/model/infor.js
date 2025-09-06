@@ -8,5 +8,3 @@ const TicketInfoSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("Infor", TicketInfoSchema, "infors");
-
-module.exports = TicketInforModel;
