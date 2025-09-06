@@ -241,7 +241,7 @@ const handlePayment = async () => {
       {stage === 1 && (
         <div>
           <h2>Chọn chỗ ngồi</h2>
-          <div className='Soluongve'>
+          <div className="seat-grid">
             {seats.map((x) => (
               <button
                 key={x}
