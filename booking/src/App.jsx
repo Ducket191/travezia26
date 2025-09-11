@@ -115,6 +115,7 @@ const handlePayment = async () => {
         name: Name,
         phonenumber: Phonenumber,
         ticketCount: selectedTickets,
+        selectedSeats: selectedSeats,
       })
     });
 
@@ -274,6 +275,7 @@ const handlePayment = async () => {
                 <li>Số điện thoại: {Phonenumber}</li>
                 <li>Email: {Email}</li>
                 <li>Số lượng vé: {selectedTickets}</li>
+                <li>Chỗ ngồi: {selectedSeats.join(', ')}</li>
               </ul>
             </ul>
             <button onClick={backStage}>Đặt lại thông tin cá nhân</button>
