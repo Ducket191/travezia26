@@ -106,7 +106,7 @@ Thông tin của bạn:
 - Email: ${email}
 - Số điện thoại: ${phonenumber}
 - Số lượng vé: ${ticketCount}
-- Số lượng vé: ${selectedSeat}
+- Chỗ ngồi: ${selectedSeat}
 
 Trân trọng,
 Glee Ams,`
