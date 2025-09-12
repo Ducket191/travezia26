@@ -52,7 +52,7 @@ function App() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (selectedTickets != null) {
-      console.log('Submitted:', { Name, Phonenumber, Email, selectedTickets });
+      console.log('Submitted:', { Name, Phonenumber, Email, selectedTickets, selectedSeats });
       nextStage();
     } else {
       alert('Bạn phải chọn số lượng vé');
