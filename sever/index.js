@@ -118,13 +118,13 @@ Glee Ams,`
 // ✅ Payment link endpoint
 app.post('/create-payment-link', async (req, res) => {
   try {
-    const { amount, orderCode, email, name, phonenumber, ticketCount, selectedSeat } = req.body;
+    const { amount, orderCode, email, name, phonenumber, ticketCount, selectedSeats } = req.body;
 
     if (!amount || !orderCode || !email || !name || !phonenumber || !ticketCount) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    pendingOrders.set(Number(orderCode), { email, name, phonenumber, ticketCount, selectedSeat });
+    pendingOrders.set(Number(orderCode), { email, name, phonenumber, ticketCount, selectedSeats });
 
     const order = {
       amount,
@@ -144,9 +144,9 @@ app.post('/create-payment-link', async (req, res) => {
 
 // ✅ Manual email test
 app.post('/send-email', async (req, res) => {
-  const { email, name, phonenumber, ticketCount, selectedSeat } = req.body;
+  const { email, name, phonenumber, ticketCount, selectedSeats } = req.body;
   try {
-    await sendConfirmationEmail({ email, name, phonenumber, ticketCount, selectedSeat });
+    await sendConfirmationEmail({ email, name, phonenumber, ticketCount, selectedSeats });
     res.status(200).json({ message: '✅ Email sent successfully!' });
   } catch (error) {
     console.error('❌ Error sending email:', error);
@@ -156,7 +156,7 @@ app.post('/send-email', async (req, res) => {
 
 // ✅ Alert internal team
 app.post('/send-alertemail', async (req, res) => {
-  const { email, name, phonenumber, ticketCount, selectedSeat } = req.body;
+  const { email, name, phonenumber, ticketCount, selectedSeats } = req.body;
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
