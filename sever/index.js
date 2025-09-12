@@ -194,6 +194,6 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
-mongoose.connect(`mongodb+srv://dangminhduc1912008:dangminhduc1912008@ticketinfo.fzbsswy.mongodb.net/`)
+mongoose.connect(process.env.DB_CONNECT)
 .then(() => console.log('Database is connected'))
 .catch((err) => console.error('Failed to connect to MongoDB', err));
