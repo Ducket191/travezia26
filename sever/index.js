@@ -84,7 +84,7 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
 });
 
 // ✅ Email helper
-async function sendConfirmationEmail({ email, name, phonenumber, ticketCount, selectedSeat }) {
+async function sendConfirmationEmail({ email, name, phonenumber, ticketCount, selectedSeats }) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -106,7 +106,7 @@ Thông tin của bạn:
 - Email: ${email}
 - Số điện thoại: ${phonenumber}
 - Số lượng vé: ${ticketCount}
-- Chỗ ngồi: ${selectedSeat}
+- Chỗ ngồi: ${selectedSeats}
 
 Trân trọng,
 Glee Ams,`
