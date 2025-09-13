@@ -110,6 +110,10 @@ async function sendConfirmationEmail({ email, name, phonenumber, ticketCount, se
     tls: { rejectUnauthorized: false },
   });
 
+  const seats = Array.isArray(selectedSeats)
+    ? selectedSeats.join(', ')
+    : (selectedSeats || 'Không có');
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
@@ -122,7 +126,7 @@ Thông tin của bạn:
 - Email: ${email}
 - Số điện thoại: ${phonenumber}
 - Số lượng vé: ${ticketCount}
-- Chỗ ngồi: ${selectedSeats}
+- Chỗ ngồi: ${seats}
 
 Trân trọng,
 Glee Ams,`
@@ -130,6 +134,7 @@ Glee Ams,`
 
   await transporter.sendMail(mailOptions);
 }
+
 
 // ✅ Payment link endpoint
 app.post('/create-payment-link', async (req, res) => {
@@ -210,6 +215,6 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
-mongoose.connect(`mongodb+srv://dangminhduc1912008:dangminhduc1912008@ticketinfo.fzbsswy.mongodb.net/`)
+mongoose.connect(process.env.DB_CONNECT)
 .then(() => console.log('Database is connected'))
 .catch((err) => console.error('Failed to connect to MongoDB', err));
