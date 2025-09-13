@@ -74,20 +74,6 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
       return res.sendStatus(200);
     }
 
-        try {
-      const newInfor = new InforModel({
-        Name: orderInfo.name,   // adjust field names to match your stored data
-        Email: orderInfo.email,
-        Phone: orderInfo.phonenumber,
-        Ticket: orderInfo.ticketCount,
-        Seat: orderInfo.selectedSeats
-      });
-      const savedInfor = await newInfor.save();
-      console.log('💾 Saved to DB:', savedInfor._id);
-    } catch (dbErr) {
-      console.error('❌ Failed to save to MongoDB:', dbErr);
-    }
-
     await sendConfirmationEmail(orderInfo);
     console.log('✅ Email sent to', orderInfo.email);
 
