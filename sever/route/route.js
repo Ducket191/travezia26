@@ -9,7 +9,8 @@ router.post('/infor/add', async (req, res) => {
             Name: req.body.Name,
             Email: req.body.Email,
             Phone: req.body.Phone,
-            Ticket: req.body.Ticket
+            Ticket: req.body.Ticket,
+            Seat: req.body.Seat
         });
 
         const savedInfor = await newInfor.save();

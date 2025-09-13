@@ -72,6 +72,20 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
       return res.sendStatus(200);
     }
 
+        try {
+      const newInfor = new InforModel({
+        Name: orderInfo.name,   // adjust field names to match your stored data
+        Email: orderInfo.email,
+        Phone: orderInfo.phonenumber,
+        Ticket: orderInfo.ticketCount,
+        Seat: orderInfo.selectedSeats
+      });
+      const savedInfor = await newInfor.save();
+      console.log('💾 Saved to DB:', savedInfor._id);
+    } catch (dbErr) {
+      console.error('❌ Failed to save to MongoDB:', dbErr);
+    }
+
     await sendConfirmationEmail(orderInfo);
     console.log('✅ Email sent to', orderInfo.email);
 
@@ -194,6 +208,6 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
-mongoose.connect(process.env.DB_CONNECT)
+mongoose.connect(`mongodb+srv://dangminhduc1912008:dangminhduc1912008@ticketinfo.fzbsswy.mongodb.net/`)
 .then(() => console.log('Database is connected'))
 .catch((err) => console.error('Failed to connect to MongoDB', err));
