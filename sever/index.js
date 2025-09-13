@@ -71,6 +71,7 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
     const orderInfo = pendingOrders.get(Number(orderCode));
     if (!orderInfo) {
       console.error('❌ Order info not found for:', orderCode);
+      console.log('📌 Current pendingOrders keys:', [...pendingOrders.keys()]);
       return res.sendStatus(200);
     }
 
