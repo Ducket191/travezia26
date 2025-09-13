@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const route = require('./route/route');
-const InforModel = require('../model/infor'); 
+const InforModel = require('./model/infor'); 
 
 
 const app = express();
