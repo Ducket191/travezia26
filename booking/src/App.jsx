@@ -115,7 +115,6 @@ const handlePayment = async () => {
         name: Name,
         phonenumber: Phonenumber,
         ticketCount: selectedTickets,
-        selectedSeats: Array.isArray(selectedSeats) ? selectedSeats.join(', ') : selectedSeats,
       })
     });
 
