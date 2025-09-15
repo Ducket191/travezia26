@@ -87,7 +87,7 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
 });
 
 // ✅ Email helper
-async function sendConfirmationEmail({ email, name, phonenumber, ticketCount, selectedSeats }) {
+async function sendConfirmationEmail({ email, name, phonenumber, ticketCount }) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -97,9 +97,6 @@ async function sendConfirmationEmail({ email, name, phonenumber, ticketCount, se
     tls: { rejectUnauthorized: false },
   });
 
-  const seats = Array.isArray(selectedSeats)
-    ? selectedSeats.join(', ')
-    : (selectedSeats || 'Không có');
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -113,7 +110,6 @@ Thông tin của bạn:
 - Email: ${email}
 - Số điện thoại: ${phonenumber}
 - Số lượng vé: ${ticketCount}
-- Chỗ ngồi: ${seats}
 
 Trân trọng,
 Glee Ams,`
@@ -164,7 +160,7 @@ app.post('/send-email', async (req, res) => {
 
 // ✅ Alert internal team
 app.post('/send-alertemail', async (req, res) => {
-  const { email, name, phonenumber, ticketCount, selectedSeats } = req.body;
+  const { email, name, phonenumber, ticketCount } = req.body;
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
