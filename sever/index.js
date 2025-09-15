@@ -89,7 +89,9 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
 // ✅ Email helper
 async function sendConfirmationEmail({ email, name, phonenumber, ticketCount }) {
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // Gmail requires this with port 465
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
