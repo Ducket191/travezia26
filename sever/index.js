@@ -124,13 +124,13 @@ Glee Ams,`
 // ✅ Payment link endpoint
 app.post('/create-payment-link', async (req, res) => {
   try {
-    const { amount, orderCode, email, name, phonenumber, ticketCount, selectedSeats } = req.body;
+    const { amount, orderCode, email, name, phonenumber, ticketCount } = req.body;
 
     if (!amount || !orderCode || !email || !name || !phonenumber || !ticketCount) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    pendingOrders.set(Number(orderCode), { email, name, phonenumber, ticketCount, selectedSeats });
+    pendingOrders.set(Number(orderCode), { email, name, phonenumber, ticketCount });
 
     const order = {
       amount,
