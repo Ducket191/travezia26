@@ -89,14 +89,11 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
 // ✅ Email helper
 async function sendConfirmationEmail({ email, name, phonenumber, ticketCount }) {
   const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: 587,
-  secure: false,
+    service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    tls: { rejectUnauthorized: false },
   });
 
 
@@ -112,6 +109,7 @@ Thông tin của bạn:
 - Email: ${email}
 - Số điện thoại: ${phonenumber}
 - Số lượng vé: ${ticketCount}
+
 
 Trân trọng,
 Glee Ams,`
@@ -150,9 +148,9 @@ app.post('/create-payment-link', async (req, res) => {
 
 // ✅ Manual email test
 app.post('/send-email', async (req, res) => {
-  const { email, name, phonenumber, ticketCount } = req.body;
+  const { email, name, phonenumber, ticketCount, selectedSeats } = req.body;
   try {
-    await sendConfirmationEmail({ email, name, phonenumber, ticketCount});
+    await sendConfirmationEmail({ email, name, phonenumber, ticketCount, selectedSeats });
     res.status(200).json({ message: '✅ Email sent successfully!' });
   } catch (error) {
     console.error('❌ Error sending email:', error);
