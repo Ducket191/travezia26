@@ -150,9 +150,9 @@ app.post('/create-payment-link', async (req, res) => {
 
 // ✅ Manual email test
 app.post('/send-email', async (req, res) => {
-  const { email, name, phonenumber, ticketCount, selectedSeats } = req.body;
+  const { email, name, phonenumber, ticketCount } = req.body;
   try {
-    await sendConfirmationEmail({ email, name, phonenumber, ticketCount, selectedSeats });
+    await sendConfirmationEmail({ email, name, phonenumber, ticketCount});
     res.status(200).json({ message: '✅ Email sent successfully!' });
   } catch (error) {
     console.error('❌ Error sending email:', error);
