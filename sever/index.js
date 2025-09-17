@@ -88,19 +88,18 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
 
 // ✅ Email helper
 async function sendConfirmationEmail({ email, name, phonenumber, ticketCount }) {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // Gmail requires this with port 465
+ const transporter = nodemailer.createTransport({
+    host: "smtp.sendgrid.net",
+    port: 587,
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: "apikey", // literally the string "apikey"
+      pass: process.env.SENDGRID_API_KEY, // your SendGrid API key
     },
   });
 
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: process.env.SENDGRID_VERIFIED_SENDER,
     to: email,
     subject: 'Xác nhận đăng ký vé Travezia',
     text: `Xin chào ${name},
