@@ -8,8 +8,9 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const route = require('./route/route');
 const InforModel = require('./model/infor'); 
+import sgMail from "@sendgrid/mail";
 
-
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const app = express();
 const PORT = process.env.PORT || 3000;
 const YOUR_DOMAIN = `https://trave26.onrender.com`;
@@ -86,22 +87,12 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
   }
 });
 
-// ✅ Email helper
+
 async function sendConfirmationEmail({ email, name, phonenumber, ticketCount }) {
- const transporter = nodemailer.createTransport({
-    host: "smtp.sendgrid.net",
-    port: 587,
-    auth: {
-      user: "apikey", // literally the string "apikey"
-      pass: process.env.SENDGRID_API_KEY, // your SendGrid API key
-    },
-  });
-
-
-  const mailOptions = {
-    from: process.env.SENDGRID_VERIFIED_SENDER,
+  const msg = {
     to: email,
-    subject: 'Xác nhận đăng ký vé Travezia',
+    from: process.env.SENDGRID_VERIFIED_SENDER, 
+    subject: "Xác nhận đăng ký vé Travezia",
     text: `Xin chào ${name},
 
 Cảm ơn bạn đã đăng kí vé tham dự Travézia XXIII: Retro Spins!
@@ -111,12 +102,11 @@ Thông tin của bạn:
 - Số điện thoại: ${phonenumber}
 - Số lượng vé: ${ticketCount}
 
-
 Trân trọng,
-Glee Ams,`
+Glee Ams,`,
   };
 
-  await transporter.sendMail(mailOptions);
+  await sgMail.send(msg);
 }
 
 
