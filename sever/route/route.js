@@ -1,47 +1,45 @@
 const express = require('express');
 const router = express.Router();
-const InforModel = require('../model/infor'); 
+const InforModel = require('../model/infor');
 
-// Define the POST route for creating a new vocabulary item
 router.post('/infor/add', async (req, res) => {
-    try {
-        const newInfor = new InforModel({
-            Name: req.body.Name,
-            Email: req.body.Email,
-            Phone: req.body.Phone,
-            Ticket: req.body.Ticket,
-            Seat: req.body.Seat
-        });
+  try {
+    const { Name, Email, Phone, Ticket, Seat } = req.body;
 
-        const savedInfor = await newInfor.save();
-        res.status(200).json(savedInfor);
-    } catch (err) {
-        console.error("Error saving the vocab item:", err);
-        res.status(500).json({ error: "Failed to save the vocab item" });
+    if (!Name || !Email || !Phone || !Ticket || !Seat) {
+      return res.status(400).json({ error: 'All fields are required' });
     }
+
+    const newInfor = new InforModel({ Name, Email, Phone, Ticket, Seat });
+    const savedInfor = await newInfor.save();
+    res.status(201).json(savedInfor);
+  } catch (err) {
+    console.error('Error saving data:', err);
+    res.status(500).json({ error: 'Failed to save data' });
+  }
 });
+
 router.get('/infor', async (req, res) => {
-    try {
-        const inforItems = await InforModel.find();
-        res.status(200).json(inforItems);
-    } catch (err) {
-        console.error("Error retrieving vocab items:", err);
-        res.status(500).json({ error: "Failed to retrieve vocab items" });
-    }
+  try {
+    const inforItems = await InforModel.find();
+    res.status(200).json(inforItems);
+  } catch (err) {
+    console.error('Error retrieving data:', err);
+    res.status(500).json({ error: 'Failed to retrieve data' });
+  }
 });
 
 router.delete('/infor/:id', async (req, res) => {
-    try {
-        const deletedInfor = await InforModel.findByIdAndDelete(req.params.id);
-        if (deletedInfor) {
-            res.status(200).json({ message: 'Vocabulary item deleted successfully' });
-        } else {
-            res.status(404).json({ error: 'Vocabulary item not found' });
-        }
-    } catch (err) {
-        console.error("Error deleting the vocab item:", err);
-        res.status(500).json({ error: "Failed to delete the vocab item" });
+  try {
+    const deleted = await InforModel.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Item not found' });
     }
+    res.status(200).json({ message: 'Item deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting data:', err);
+    res.status(500).json({ error: 'Failed to delete data' });
+  }
 });
 
 module.exports = router;

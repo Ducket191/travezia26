@@ -76,6 +76,17 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
       return res.sendStatus(200);
     }
 
+   const newInfor = new InforModel({
+      Name: orderInfo.name,
+      Email: orderInfo.email,
+      Phone: orderInfo.phonenumber,
+      Ticket: orderInfo.ticketCount,
+      Seat: orderInfo.seat,
+    });
+
+    await newInfor.save();
+    console.log('💾 Info saved to database:', newInfor);
+
     await sendConfirmationEmail(orderInfo);
     console.log('✅ Email sent to', orderInfo.email);
 

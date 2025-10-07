@@ -5,6 +5,7 @@ const TicketInfoSchema = new mongoose.Schema({
     Phone: String,
     Email: String,
     Ticket: Number,
+    Seat: [String], 
 });
 
 module.exports = mongoose.model("Infor", TicketInfoSchema, "infors");
