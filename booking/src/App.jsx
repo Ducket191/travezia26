@@ -115,6 +115,7 @@ const handlePayment = async () => {
         name: Name,
         phonenumber: Phonenumber,
         ticketCount: selectedTickets,
+        seat: selectedSeats,
       })
     });
 

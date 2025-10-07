@@ -88,7 +88,7 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
 });
 
 
-async function sendConfirmationEmail({ email, name, phonenumber, ticketCount }) {
+async function sendConfirmationEmail({ email, name, phonenumber, ticketCount, seat }) {
   const msg = {
     to: email,
     from: process.env.SENDGRID_VERIFIED_SENDER, 
@@ -101,6 +101,7 @@ Thông tin của bạn:
 - Email: ${email}
 - Số điện thoại: ${phonenumber}
 - Số lượng vé: ${ticketCount}
+- Chỗ ngồi: ${seat}
 
 Trân trọng,
 Glee Ams,`,
@@ -113,13 +114,13 @@ Glee Ams,`,
 //  Payment link
 app.post('/create-payment-link', async (req, res) => {
   try {
-    const { amount, orderCode, email, name, phonenumber, ticketCount } = req.body;
+    const { amount, orderCode, email, name, phonenumber, ticketCount, seat } = req.body;
 
-    if (!amount || !orderCode || !email || !name || !phonenumber || !ticketCount) {
+    if (!amount || !orderCode || !email || !name || !phonenumber || !ticketCount || !seat) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    pendingOrders.set(Number(orderCode), { email, name, phonenumber, ticketCount });
+    pendingOrders.set(Number(orderCode), { email, name, phonenumber, ticketCount, seat });
 
     const order = {
       amount,
