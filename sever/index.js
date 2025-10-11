@@ -21,7 +21,7 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use('/', route);
 
-// PayOS config
+
 const payos = new PayOS(
   process.env.PAYOS_CLIENT_ID,
   process.env.PAYOS_API_KEY,
@@ -31,7 +31,6 @@ const payos = new PayOS(
 //  In-memory storage
 const pendingOrders = new Map();
 
-//  Webhook with debug logging
 app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => {
   try {
     let parsedBody;
@@ -41,38 +40,38 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
     } else if (typeof req.body === 'object') {
       parsedBody = req.body;
     } else {
-      console.warn('❌ Unexpected body format:', typeof req.body);
+      console.warn('Unexpected body format:', typeof req.body);
       return res.sendStatus(400);
     }
 
-    console.log('📥 Parsed JSON body:', parsedBody);
-    console.log('🪪 Headers:', req.headers);
+    console.log('Parsed JSON body:', parsedBody);
+    console.log('Headers:', req.headers);
 
     let paymentData;
     try {
       paymentData = payos.verifyPaymentWebhookData(parsedBody);
-      console.log('🔐 Verified paymentData:', paymentData);
+      console.log('Verified paymentData:', paymentData);
     } catch (verifyErr) {
-      console.error('❌ Error during webhook verification:', verifyErr);
+      console.error('Error during webhook verification:', verifyErr);
       return res.sendStatus(400);
     }
 
     if (!paymentData || !paymentData.orderCode) {
-      console.warn('❌ Invalid webhook or no data');
+      console.warn('Invalid webhook or no data');
       return res.sendStatus(400);
     }
 
     const { code, desc, orderCode } = paymentData;
 
     if (code !== '00') {
-      console.warn(`❌ Payment failed: ${desc}`);
+      console.warn(`Payment failed: ${desc}`);
       return res.sendStatus(200);
     }
 
     const orderInfo = pendingOrders.get(Number(orderCode));
     if (!orderInfo) {
-      console.error('❌ Order info not found for:', orderCode);
-      console.log('📌 Current pendingOrders keys:', [...pendingOrders.keys()]);
+      console.error('Order info not found for:', orderCode);
+      console.log('Current pendingOrders keys:', [...pendingOrders.keys()]);
       return res.sendStatus(200);
     }
 
@@ -85,15 +84,15 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
     });
 
     await newInfor.save();
-    console.log('💾 Info saved to database:', newInfor);
+    console.log('Info saved to database:', newInfor);
 
     await sendConfirmationEmail(orderInfo);
-    console.log('✅ Email sent to', orderInfo.email);
+    console.log('Email sent to', orderInfo.email);
 
     pendingOrders.delete(Number(orderCode));
     return res.sendStatus(200);
   } catch (error) {
-    console.error('❌ Webhook error:', error);
+    console.error('Webhook error:', error);
     return res.sendStatus(200);
   }
 });
@@ -144,7 +143,7 @@ app.post('/create-payment-link', async (req, res) => {
     const paymentLink = await payos.createPaymentLink(order);
     res.json({ url: paymentLink.checkoutUrl });
   } catch (error) {
-    console.error('❌ Payment link error:', error);
+    console.error('Payment link error:', error);
     res.status(500).json({ error: 'Failed to create payment link' });
   }
 });
@@ -154,9 +153,9 @@ app.post('/send-email', async (req, res) => {
   const { email, name, phonenumber, ticketCount, selectedSeats } = req.body;
   try {
     await sendConfirmationEmail({ email, name, phonenumber, ticketCount, selectedSeats });
-    res.status(200).json({ message: '✅ Email sent successfully!' });
+    res.status(200).json({ message: 'Email sent successfully!' });
   } catch (error) {
-    console.error('❌ Error sending email:', error);
+    console.error('Error sending email:', error);
     res.status(500).json({ message: 'Failed to send email', error });
   }
 });
@@ -189,16 +188,16 @@ Thông tin khách chưa thanh toán:
 
   try {
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: '✅ Alert email sent!' });
+    res.status(200).json({ message: 'Alert email sent!' });
   } catch (error) {
-    console.error('❌ Error sending alert email:', error);
+    console.error('Error sending alert email:', error);
     res.status(500).json({ message: 'Failed to send alert email', error });
   }
 });
 
 //  Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 mongoose.connect(process.env.DB_CONNECT)
