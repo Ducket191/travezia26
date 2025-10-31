@@ -17,7 +17,7 @@ function App() {
   useEffect(() => {
     const fetchAvailableSeats = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/availseat");
+        const res = await axios.get("https://trave26.onrender.com/availseat");
         const availableSeats = res.data.map((item) => item.Seat);
         setSeats(availableSeats);
         console.log("Fetched seats:", res.data);
