@@ -7,7 +7,8 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const route = require('./route/route');
-const InforModel = require('./model/infor'); 
+const InforModel = require('./model/infor');
+const SeatDataBase = require('./model/seat'); 
 const sgMail = require("@sendgrid/mail");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);

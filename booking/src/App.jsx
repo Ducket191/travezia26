@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import './App.css';
 import axios from 'axios';
+
 
 function App() {
   const [Name, setName] = useState('');
@@ -10,19 +11,25 @@ function App() {
   const [SeatCount, setSeatCount] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [stage, setStage] = useState(-1);
-  const seats = [];
+  const [seats, setSeats] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const rows = ["A","B","C","D","E","F","G","H","I"];
-  rows.forEach(row => {
-    for (let i = 1; i <= 30; i++) {  // adjust max number per row
-      seats.push(`${row}${i}`);
-    }
-  });
+  useEffect(() => {
+    const fetchAvailableSeats = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/availseat");
+        const availableSeats = res.data.map((item) => item.Seat);
+        setSeats(availableSeats);
+        console.log("Fetched seats:", res.data);
+      } catch (err) {
+        console.error("Error fetching available seats:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-
-  for (let i = 1; i <= 100; i++) {
-    seats.push(`S${i}`);
-  }
+    fetchAvailableSeats();
+  }, []);
 
 
   const handleNameChange = (event) => setName(event.target.value);
@@ -61,6 +68,10 @@ function App() {
 
   const nextStage = () => setStage(stage + 1);
   const backStage = () => setStage(stage - 1);
+  const checkSeat = () => {
+    
+    setStage(stage + 1);
+  }
 
   const handleAdd = () => {
     axios.post('http://localhost:3000/Infor/add', {

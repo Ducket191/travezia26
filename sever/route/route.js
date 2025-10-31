@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const InforModel = require('../model/infor');
+const SeatDataBase = require('../model/seat');
 
 router.post('/infor/add', async (req, res) => {
   try {
@@ -29,17 +30,35 @@ router.get('/infor', async (req, res) => {
   }
 });
 
-router.delete('/infor/:id', async (req, res) => {
+router.post('/bookseat', async (req,res) => {
+  const seatName = req.body;
   try {
-    const deleted = await InforModel.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res.status(404).json({ error: 'Item not found' });
+    const bookedSeat = await SeatModel.findOneAndUpdate(
+      { Seat: seatName, Status: "available" },
+      { $set: { Status: "booked"}},
+      { new: true }
+    );
+    if (!bookedSeat) {
+      return res.status(400).json({ message: "Seat already booked" });
     }
-    res.status(200).json({ message: 'Item deleted successfully' });
   } catch (err) {
-    console.error('Error deleting data:', err);
-    res.status(500).json({ error: 'Failed to delete data' });
+    console.error("Error booking seat:", err);
+    res.status(500).json({ error: "Booking failed" });
+  }
+})
+
+router.get('/availseat', async (req, res) => {
+  try {
+    const availableSeats = await InforModel.find(
+      { Status: "available" },
+      { Seat: 1, _id: 0 }      
+    );
+    res.status(200).json(availableSeats); 
+  } catch (err) {
+    console.error('Error retrieving data:', err);
+    res.status(500).json({ error: 'Failed to retrieve data' });
   }
 });
+
 
 module.exports = router;
