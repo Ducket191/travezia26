@@ -49,7 +49,7 @@ router.post('/bookseat', async (req,res) => {
 
 router.get('/availseat', async (req, res) => {
   try {
-    const availableSeats = await InforModel.find(
+    const availableSeats = await SeatDataBase.find(
       { Status: "available" },
       { Seat: 1, _id: 0 }      
     );
