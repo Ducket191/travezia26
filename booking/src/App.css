@@ -158,7 +158,7 @@ button:hover {
 }
 
 .seat.available {
-  background-color: #4CAF50; /* green */
+  background-color: #ffffff; 
   color: white;
 }
 
@@ -169,6 +169,6 @@ button:hover {
 }
 
 .seat.selected {
-  background-color: #ff9800; /* orange */
+  background-color: #2200ff; 
   color: white;
 }
