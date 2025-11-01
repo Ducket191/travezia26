@@ -39,7 +39,9 @@ router.post('/bookseat', async (req,res) => {
       { new: true }
     );
     if (!bookedSeat) {
-      return res.status(400).json({ message: "Seat already booked" });
+      return res.status(400).json({can: true});
+    } else {
+      return res.status(400).json({can: false});
     }
   } catch (err) {
     console.error("Error booking seat:", err);
@@ -49,11 +51,11 @@ router.post('/bookseat', async (req,res) => {
 
 router.get('/availseat', async (req, res) => {
   try {
-    const availableSeats = await SeatDataBase.find(
-      { Status: "available" },
-      { Seat: 1, _id: 0 }      
+    const allSeats = await SeatDataBase.find(
+      {},
+      { Seat: 1, Status: 1, _id: 0 }
     );
-    res.status(200).json(availableSeats); 
+    res.status(200).json(allSeats);
   } catch (err) {
     console.error('Error retrieving data:', err);
     res.status(500).json({ error: 'Failed to retrieve data' });

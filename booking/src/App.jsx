@@ -18,8 +18,7 @@ function App() {
     const fetchAvailableSeats = async () => {
       try {
         const res = await axios.get("https://trave26.onrender.com/availseat");
-        const availableSeats = res.data.map((item) => item.Seat);
-        setSeats(availableSeats);
+        setSeats(res.data);
         console.log("Fetched seats:", res.data);
       } catch (err) {
         console.error("Error fetching available seats:", err);
@@ -31,6 +30,23 @@ function App() {
     fetchAvailableSeats();
   }, []);
 
+  const handleCheckSeat = (seat) => {
+    axios.post('https://trave26.onrender.com/bookseat', {
+      seatName: seat,
+    })
+    .then((result) => {
+      const can = result.data.can;
+      if (can) {
+        nextStage();
+      } else {
+        alert("Cant choose this one");
+      };
+    })
+    .catch((err) => {
+      console.error('Error submitting data:', err);
+      alert('Đã xảy ra lỗi khi gửi thông tin. Vui lòng thử lại sau ít phút.');
+    });
+  }
 
   const handleNameChange = (event) => setName(event.target.value);
   const handlePhonenumberChange = (event) => setPhonenumber(event.target.value);
@@ -254,22 +270,31 @@ const handlePayment = async () => {
         <div>
           <h2>Chọn chỗ ngồi:</h2>
           <h3>*Hạng ghế single bao gồm hàng S từ S1 đến S100 </h3>
+
           <div className="seat-grid">
             {seats.map((x) => (
               <button
-                key={x}
-                onClick={() => handleSeatChosen(x)}
+                key={x.Seat}
+                onClick={() => x.Status === "available" && handleSeatChosen(x.Seat)}
                 type="button"
-                className={selectedSeats.includes(x) ? 'selected' : 'ticket-button'}
+                disabled={x.Status !== "available"}
+                className={
+                x.Status !== "available"
+                ? "seat booked"
+                : selectedSeats.includes(x.Seat)
+                ? "seat selected"
+                : "seat available"
+                }
               >
-                {x}
+                {x.Seat}
               </button>
             ))}
           </div>
+
           <p>Đã chọn: {selectedSeats.join(', ') || 'Chưa chọn'}</p>
-          <button onClick={nextStage}>Tiếp theo</button>
+          <button onClick={handleCheckSeat}>Tiếp theo</button>
           <button onClick={backStage}>Quay lại</button>
-        </div>
+      </div>
       )}
       {stage === 2 && (
         <div className="payinginfor">

@@ -147,3 +147,28 @@ button:hover {
   max-width: 800px;
   margin: 0 auto;
 }
+
+.seat {
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.seat.available {
+  background-color: #4CAF50; /* green */
+  color: white;
+}
+
+.seat.booked {
+  background-color: #ccc;
+  color: #555;
+  cursor: not-allowed;
+}
+
+.seat.selected {
+  background-color: #ff9800; /* orange */
+  color: white;
+}
