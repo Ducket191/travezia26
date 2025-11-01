@@ -158,8 +158,15 @@ button:hover {
 }
 
 .seat.available {
-  background-color: #ffffff; 
-  color: white;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #f9f9f9;
+  color: #333;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .seat.booked {
