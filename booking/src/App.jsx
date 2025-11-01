@@ -30,23 +30,23 @@ function App() {
     fetchAvailableSeats();
   }, []);
 
-  const handleCheckSeat = (seat) => {
-    axios.post('https://trave26.onrender.com/bookseat', {
-      seatName: seat,
-    })
-    .then((result) => {
-      const can = result.data.can;
-      if (can) {
-        nextStage();
-      } else {
-        alert("Cant choose this one");
-      };
-    })
-    .catch((err) => {
-      console.error('Error submitting data:', err);
-      alert('Đã xảy ra lỗi khi gửi thông tin. Vui lòng thử lại sau ít phút.');
+const handleCheckSeat = async () => {
+  try {
+    const res = await axios.post('https://trave26.onrender.com/bookseat', {
+      seatName: selectedSeats,
     });
+
+    if (res.data.can) {
+      nextStage();
+    } else {
+      alert("Một hoặc nhiều ghế đã được đặt trước!");
+    }
+  } catch (err) {
+    console.error("Error submitting data:", err);
+    alert("Đã xảy ra lỗi khi gửi thông tin. Vui lòng thử lại sau ít phút.");
   }
+};
+
 
   const handleNameChange = (event) => setName(event.target.value);
   const handlePhonenumberChange = (event) => setPhonenumber(event.target.value);
@@ -55,7 +55,7 @@ function App() {
   const handleSelection = (value) => {
     setSelectedTickets(value);
     setSeatCount(value);
-    setSelectedSeats([]); // reset seat selection
+    setSelectedSeats([]); 
   };
 
   const handleSeatChosen = (seat) => {

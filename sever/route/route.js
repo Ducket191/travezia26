@@ -30,24 +30,32 @@ router.get('/infor', async (req, res) => {
   }
 });
 
-router.post('/bookseat', async (req,res) => {
-  const seatName = req.body;
+router.post('/bookseat', async (req, res) => {
   try {
-    const bookedSeat = await SeatModel.findOneAndUpdate(
-      { Seat: seatName, Status: "available" },
-      { $set: { Status: "booked"}},
-      { new: true }
+    const { seatName } = req.body; 
+
+    if (!Array.isArray(seatName) || seatName.length === 0) {
+      return res.status(400).json({ error: "No seats provided" });
+    }
+
+s
+    const result = await SeatModel.updateMany(
+      { Seat: { $in: seatName }, Status: "available" },
+      { $set: { Status: "booked" } }
     );
-    if (!bookedSeat) {
-      return res.status(400).json({can: true});
+
+
+    if (result.modifiedCount === seatName.length) {
+      return res.status(200).json({ success: true, can: true }); 
     } else {
-      return res.status(400).json({can: false});
+      return res.status(200).json({ success: false, can: false }); 
     }
   } catch (err) {
-    console.error("Error booking seat:", err);
+    console.error("Error booking seats:", err);
     res.status(500).json({ error: "Booking failed" });
   }
-})
+});
+
 
 router.get('/availseat', async (req, res) => {
   try {
