@@ -38,7 +38,6 @@ router.post('/bookseat', async (req, res) => {
       return res.status(400).json({ error: "No seats provided" });
     }
 
-s
     const result = await SeatModel.updateMany(
       { Seat: { $in: seatName }, Status: "available" },
       { $set: { Status: "booked" } }
