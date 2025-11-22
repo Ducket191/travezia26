@@ -69,17 +69,5 @@ router.get('/availseat', async (req, res) => {
   }
 });
 
-router.post('/setback', async (req, res) => {
-  try {
-    const data = req.body;
-    const result = await SeatDataBase.updateMany(
-      {Seat: data.Name, Status: "booked"},
-      { $set: { Status: "available" } }
-    );
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed" });
-  }
-});
 
 module.exports = router;

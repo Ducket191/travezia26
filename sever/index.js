@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 const PayOS = require('@payos/node');
 const cors = require('cors');
@@ -16,7 +15,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const YOUR_DOMAIN = `https://trave26.onrender.com`;
 
-//  Middleware
 app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
@@ -32,6 +30,7 @@ const payos = new PayOS(
 //  In-memory storage
 const pendingOrders = new Map();
 
+
 app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => {
   try {
     let parsedBody;
@@ -41,57 +40,73 @@ app.post('/payos-webhook', bodyParser.raw({ type: '*/*' }), async (req, res) => 
     } else if (typeof req.body === 'object') {
       parsedBody = req.body;
     } else {
-      console.warn('Unexpected body format:', typeof req.body);
       return res.sendStatus(400);
     }
-
-    console.log('Parsed JSON body:', parsedBody);
-    console.log('Headers:', req.headers);
 
     let paymentData;
     try {
       paymentData = payos.verifyPaymentWebhookData(parsedBody);
-      console.log('Verified paymentData:', paymentData);
     } catch (verifyErr) {
-      console.error('Error during webhook verification:', verifyErr);
+      console.error('Webhook signature invalid');
       return res.sendStatus(400);
     }
 
-    if (!paymentData || !paymentData.orderCode) {
-      console.warn('Invalid webhook or no data');
-      return res.sendStatus(400);
-    }
+    if (!paymentData?.orderCode) return res.sendStatus(400);
 
     const { code, desc, orderCode } = paymentData;
-
-    if (code !== '00') {
-      console.warn(`Payment failed: ${desc}`);
-      return res.sendStatus(200);
-    }
-
     const orderInfo = pendingOrders.get(Number(orderCode));
+
     if (!orderInfo) {
-      console.error('Order info not found for:', orderCode);
-      console.log('Current pendingOrders keys:', [...pendingOrders.keys()]);
+      console.warn('Order not found for webhook:', orderCode);
       return res.sendStatus(200);
     }
 
-   const newInfor = new InforModel({
-      Name: orderInfo.name,
-      Email: orderInfo.email,
-      Phone: orderInfo.phonenumber,
-      Ticket: orderInfo.ticketCount,
-      Seat: orderInfo.seat,
-    });
+    //  Non-success codes so rollback seats
+    const nonSuccessCodes = ['PAYMENT_EXPIRED', 'PAYMENT_CANCELED', 'PAYMENT_FAILED'];
 
-    await newInfor.save();
-    console.log('Info saved to database:', newInfor);
+    if (nonSuccessCodes.includes(code)) {
+      try {
+        await SeatDataBase.updateMany(
+          { Seat: { $in: orderInfo.seat }, Status: "booked" },
+          { $set: { Status: "available" } }
+        );
+        console.log(`Seats released for order ${orderCode} due to ${code}`);
+      } catch (err) {
+        console.error('Failed to release seats:', err);
+      }
 
-    await sendConfirmationEmail(orderInfo);
-    console.log('Email sent to', orderInfo.email);
+      pendingOrders.delete(Number(orderCode));
+      return res.sendStatus(200);
+    }
 
-    pendingOrders.delete(Number(orderCode));
+    // Successful payment
+    if (code === '00') {
+      const newInfor = new InforModel({
+        Name: orderInfo.name,
+        Email: orderInfo.email,
+        Phone: orderInfo.phonenumber,
+        Ticket: orderInfo.ticketCount,
+        Seat: orderInfo.seat,
+      });
+
+      await newInfor.save();
+
+      // Mark seats as paid
+      await SeatDataBase.updateMany(
+        { Seat: { $in: orderInfo.seat }, Status: "booked" },
+        { $set: { Status: "paid" } }
+      );
+
+      await sendConfirmationEmail(orderInfo);
+      pendingOrders.delete(Number(orderCode));
+
+      return res.sendStatus(200);
+    }
+
+    // For any other weird states
+    console.warn('Unhandled webhook code:', code, desc);
     return res.sendStatus(200);
+
   } catch (error) {
     console.error('Webhook error:', error);
     return res.sendStatus(200);
@@ -122,7 +137,6 @@ Glee Ams,`,
 }
 
 
-//  Payment link
 app.post('/create-payment-link', async (req, res) => {
   try {
     const { amount, orderCode, email, name, phonenumber, ticketCount, seat } = req.body;
@@ -138,7 +152,8 @@ app.post('/create-payment-link', async (req, res) => {
       description: `${phonenumber}`,
       orderCode,
       returnUrl: `${YOUR_DOMAIN}/success.html`,
-      cancelUrl: `${YOUR_DOMAIN}/cancel.html`
+      cancelUrl: `${YOUR_DOMAIN}/cancel.html`,
+      expiredAt:  Math.floor(Date.now() / 1000) + 10 * 60
     };
 
     const paymentLink = await payos.createPaymentLink(order);
@@ -196,7 +211,6 @@ Thông tin khách chưa thanh toán:
   }
 });
 
-//  Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
