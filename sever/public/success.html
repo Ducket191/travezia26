@@ -4,36 +4,88 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thanh toán thành công</title>
+  <style>
+    body {
+      background: #e0f7e9;
+      color: #2c3e50;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+
+    .icon {
+      font-size: 4em;
+      margin-bottom: 20px;
+      animation: bounce 1s infinite;
+    }
+
+    h1 {
+      color: #27ae60;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+
+    a {
+      text-decoration: none;
+      background-color: #27ae60;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    a:hover {
+      background-color: #1e8449;
+      transform: scale(1.05);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+  </style>
 </head>
 <body>
-  <h1>🎉 Thanh toán thành công!</h1>
-  <p>Cảm ơn bạn đã mua vé. Vui lòng kiểm tra email của bạn để nhận vé.</p>
+  <div class="icon">🎉</div>
+  <h1>Thanh toán thành công!</h1>
+  <p>Cảm ơn bạn đã mua vé.<br>Vui lòng kiểm tra email của bạn để nhận vé.</p>
   <a href="https://tickettravezia.netlify.app/">Quay lại trang chủ</a>
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-  window.onload = async () => {
-    const params = new URLSearchParams(window.location.search);
-    const userData = {
-      name: params.get('name'),
-      email: params.get('email'),
-      phonenumber: params.get('phonenumber'),
-      ticketCount: parseInt(params.get('ticketCount')) || 0,
-      seats: params.get('seats')?.split(',') || []
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    window.onload = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const userData = {
+        name: params.get('name'),
+        email: params.get('email'),
+        phonenumber: params.get('phonenumber'),
+        ticketCount: parseInt(params.get('ticketCount')) || 0,
+        seats: params.get('seats')?.split(',') || []
+      };
+
+      if (!userData.name || !userData.email) {
+        console.warn("⚠️ Không tìm thấy thông tin người dùng trong URL.");
+        return;
+      }
+
+      try {
+        const res = await axios.post('https://trave26.onrender.com/send-email', userData);
+        console.log('✅ Email đã được gửi:', res.data.message);
+      } catch (err) {
+        console.error('❌ Lỗi khi gửi email xác nhận:', err);
+      }
     };
-
-    if (!userData.name || !userData.email) {
-      console.warn("⚠️ Không tìm thấy thông tin người dùng trong URL.");
-      return;
-    }
-
-    try {
-      const res = await axios.post('https://trave26.onrender.com/send-email', userData);
-      console.log('✅ Email đã được gửi:', res.data.message);
-    } catch (err) {
-      console.error('❌ Lỗi khi gửi email xác nhận:', err);
-    }
-  };
-</script>
+  </script>
 </body>
 </html>

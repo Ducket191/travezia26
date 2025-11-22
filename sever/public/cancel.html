@@ -4,10 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanh toán thất bại</title>
+    <style>
+        body {
+            background: #fff0f0;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        h1 {
+            color: #e74c3c;
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        a {
+            text-decoration: none;
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        a:hover {
+            background-color: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>❌ Thanh toán bị hủy!</h1>
-    <p>Giao dịch của bạn chưa được hoàn tất. Vui lòng thử lại.</p>
-    <a href="https://tickettravezia.netlify.app/">Quay lại trang chủ</a> 
+    <div class="icon">❌</div>
+    <h1>Thanh toán bị hủy!</h1>
+    <p>Giao dịch của bạn chưa được hoàn tất.<br>Vui lòng thử lại.</p>
+    <a href="https://tickettravezia.netlify.app/">Quay lại trang chủ</a>
 </body>
 </html>
