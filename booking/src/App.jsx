@@ -192,9 +192,9 @@ const handlePayment = async () => {
   <h3>Mọi thông tin xin liên hệ:</h3>
   <ul>
     <li><strong>Email:</strong> gleeams.2324@gmail.com</li>
-    <li><strong>abc:</strong>cde </li>
-    <li><strong>...:</strong>...</li>
-    <li><strong>...:</strong>... </li>
+    <li><strong>Do Tri Khiem:</strong>0903827482</li>
+    <li><strong>Nguyen Vu Cam Linh:</strong>0907462739</li>
+    <li><strong>Vu Tung Lam:</strong>0904758293</li>
   </ul>
   <br/>
 </ul>
