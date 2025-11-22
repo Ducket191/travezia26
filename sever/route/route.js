@@ -38,7 +38,7 @@ router.post('/bookseat', async (req, res) => {
       return res.status(400).json({ error: "No seats provided" });
     }
 
-    const result = await SeatModel.updateMany(
+    const result = await SeatDataBase.updateMany(
       { Seat: { $in: seatName }, Status: "available" },
       { $set: { Status: "booked" } }
     );
@@ -69,5 +69,17 @@ router.get('/availseat', async (req, res) => {
   }
 });
 
+router.post('/setback', async (req, res) => {
+  try {
+    const data = req.body;
+    const result = await SeatDataBase.updateMany(
+      {Seat: data.Name, Status: "booked"},
+      { $set: { Status: "available" } }
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed" });
+  }
+});
 
 module.exports = router;
