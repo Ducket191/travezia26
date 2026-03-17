@@ -1,1 +1,1 @@
-"# travezia26" 
+A ticket booking website. User enters their in4 => choosing their seat => Even if multiple users choose the same seat at the same time => only the first one gets to the payment (check by sending to the database MongoDB => lock after the fastest bought) => after payment, send emails
